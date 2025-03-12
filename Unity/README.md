@@ -1,5 +1,4 @@
-this folder  contains the scripts where data is processed by a machine learning model. It utilizes Unity Barracuda for inference with a neural network model.
-
+This folder contains scripts for processing data through a machine learning model, leveraging Unity Barracuda for neural network inference.
 
 Technologies Used:
 Unity (C#) for real-time processing.
