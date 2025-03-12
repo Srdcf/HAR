@@ -1,0 +1,248 @@
+ private double initialLatitude;
+            private double initialLongitude;
+            private double initialAltitude;
+            private double initialHorizontalAcc;
+            private double initialSpeed;
+            private double initialAccX;
+            private double initialAccY;
+            private double initialAccZ;
+            private double initialMagnX;
+            private double initialMagnY;
+            private double initialMagnZ;
+            
+            private int updateCounter = 0;
+            private const int UpdateInterval = 50;
+            private bool isFirstGPSSet = false;
+            double latitudeDifference = 0.0;
+            double longitudeDifference = 0.0;
+            double AltitudeDifference = 0.0;
+            double HorizontalAccDifference = 0.0;
+            double SpeedDifference = 0.0;
+            double AccXDifference = 0.0;
+            double AccYDifference = 0.0;
+            double AccZDifference = 0.0;
+            double MagnXDifference = 0.0;
+            double MagnYDifference = 0.0;
+            double MagnZDifference = 0.0;
+
+ public TextMeshPro outputInference;
+            public Modelo model;
+
+
+ private void FixedUpdate()
+            {
+                  UpdateData();
+                  modelData(); 
+            }
+
+
+
+public void modelData()
+            {
+                  DataModel inputData = new DataModel
+                  {
+                  latitude = gpsPublisher.Latitude,
+                  longitude = gpsPublisher.Longitude,
+                  altitude = gpsPublisher.Altitude,
+                  horizontalAccData = gpsPublisher.HorizontalAcc,
+                  speedData = gpsPublisher.Speed,
+                  orientationX = orientationPublisher.Gyro_x,
+                  orientationY = orientationPublisher.Gyro_y,
+                  orientationZ = orientationPublisher.Gyro_z,
+                  accelerationX = accelerationPublisher.AccelerationX,
+                  accelerationY = accelerationPublisher.AccelerationY,
+                  accelerationZ = accelerationPublisher.AccelerationZ,
+                  inclinationX = inclinationPublisher.Roll,
+                  inclinationY = inclinationPublisher.Pitch,
+                  inclinationZ = inclinationPublisher.Yaw,
+                  magneticFieldX = magneticPublisher.MagX,
+                  magneticFieldY = magneticPublisher.MagY,
+                  magneticFieldZ = magneticPublisher.MagZ
+            };
+
+            updateCounter++;
+            Debug.Log("Counter:"+ updateCounter);
+      
+
+        if (!isFirstGPSSet)
+        {
+            initialLatitude = inputData.latitude;
+            initialLongitude = inputData.longitude;
+            initialAltitude = inputData.altitude;
+            initialHorizontalAcc = inputData.horizontalAccData;
+            initialSpeed = inputData.speedData;
+            initialAccX = inputData.accelerationX;
+            initialAccY = inputData.accelerationY;
+            initialAccZ = inputData.accelerationZ;
+            initialMagnX = inputData.magneticFieldX;
+            initialMagnY = inputData.magneticFieldY;
+            initialMagnZ = inputData.magneticFieldZ;
+          //  Debug.Log("Initial Latitude:"+ initialLatitude);
+          //  Debug.Log("Initial Longi:"+ initialLongitude);
+          //  Debug.Log("Initial Altitude:"+ initialAltitude);
+          //  Debug.Log("Initial HorizontalAcc:"+ initialHorizontalAcc);
+          //  Debug.Log("Initial Speed:"+ initialSpeed);
+          //  Debug.Log("Initial AccX:"+initialAccX);
+          //  Debug.Log("Initial AccY:"+initialAccY);
+          //  Debug.Log("Initial AccZ:"+initialAccZ);
+          //    Debug.Log("Initial MagnX:"+initialMagnX);
+          //    Debug.Log("Initial MagnY:"+initialMagnY);
+          //    Debug.Log("Initial MagnZ:"+initialMagnZ);
+            isFirstGPSSet = true;
+        }
+
+        if (updateCounter % UpdateInterval == 0)
+        {
+             latitudeDifference = inputData.latitude - initialLatitude;
+             longitudeDifference = inputData.longitude - initialLongitude;
+             AltitudeDifference = inputData.altitude - initialAltitude;
+             HorizontalAccDifference = inputData.horizontalAccData - initialHorizontalAcc;
+             SpeedDifference = inputData.speedData - initialSpeed;
+             AccXDifference = inputData.accelerationX - initialAccX;
+             AccYDifference = inputData.accelerationY - initialAccY;
+             AccZDifference = inputData.accelerationZ - initialAccZ;
+             MagnXDifference = inputData.magneticFieldX -initialMagnX;
+             MagnYDifference = inputData.magneticFieldY - initialMagnY;
+             MagnZDifference = inputData.magneticFieldZ - initialMagnZ;
+            Debug.Log($"Latitude difference after {UpdateInterval} updates: {latitudeDifference}");
+            // Reset for the next cycle
+            isFirstGPSSet = false;
+        }
+         
+    //  Debug.Log("Latitude Difference:"+ latitudeDifference);
+    //  Debug.Log("Longitude Difference:"+ longitudeDifference);
+    //  Debug.Log("Altitude Difference:"+ AltitudeDifference);
+    //  Debug.Log("HorizontalAcc Difference:"+ HorizontalAccDifference);
+    //  Debug.Log("Speed Difference:"+ SpeedDifference);
+    //    Debug.Log("AccX Difference:"+ AccXDifference);
+    //    Debug.Log("AccY Difference:"+ AccYDifference);
+    //    Debug.Log("AccZ Difference:"+ AccZDifference);
+    //       Debug.Log("MagnX Difference:"+ MagnXDifference);
+    //       Debug.Log("MagnY Difference:"+ MagnYDifference);
+    //       Debug.Log("MagnZ Difference:"+ MagnZDifference);
+      List<double> inputDataList = new List<double>
+    {
+        latitudeDifference,
+        longitudeDifference,
+        AltitudeDifference,
+        HorizontalAccDifference,
+        SpeedDifference,
+        inputData.orientationX,
+        inputData.orientationY,
+        inputData.orientationZ,
+        AccXDifference,
+        AccYDifference,
+        AccZDifference,
+        inputData.inclinationX,
+        inputData.inclinationY,
+        inputData.inclinationZ,
+        MagnXDifference,
+        MagnYDifference,
+        MagnZDifference
+    };
+       List<double> DataList = new List<double>(inputDataList);
+          foreach (var value in DataList)
+        {
+            // Exibindo valores com ponto decimal
+            Console.Write(value.ToString(CultureInfo.InvariantCulture) + ", ");
+        }
+      // Debug.Log("input data: " + string.Join(", ",DataList));
+       List<double> scaledData = scaler.ScaleData(DataList).Select(f => (double)f).ToList();
+      double[] inputScaled = scaledData.ToArray();
+      //Debug.LogError("input data scaled: " + string.Join(", ",inputScaled));
+       if (inputScaled != null && inputScaled.Length == 17)
+        {
+        double[] outputData = model.RunInference(inputScaled);
+        
+          
+        double max =0;
+        int Imax =0;
+        for(int i=0; i< outputData.Length; i++){
+            if(max<outputData[i]){
+                max=outputData[i];
+                Imax = i;
+            }
+        }
+     string label="";
+        switch (Imax){
+        case 0:
+            Imax = 0;
+            Debug.Log( "Moving");
+            label= "Moving";
+            break;
+        case 1:
+            Imax = 1;
+             Debug.Log( "Idle");
+              label = "Idle";
+             break;
+        case 2:
+             Imax =2;
+             Debug.Log( "Picking");
+               label = "Picking";
+              break;
+        case 3:
+             Imax =3;
+             Debug.Log( "Palmas");
+              label = "Palmas";
+             break;
+        case 4:
+             Imax =4;
+             Debug.Log( "Sitting ");
+             label = "sitting";
+             break;
+        }
+        
+     outputInference.text = label.ToString();
+    }
+            
+    }
+            
+
+
+
+            private void UpdateData()
+            {
+
+                  DataCSV data = new DataCSV
+                  {
+                        time = DateTime.UtcNow.ToString("dd/MM/yy HH:mm:ss.fff", CultureInfo.InvariantCulture),
+                        latitude = gpsPublisher.Latitude,
+                        longitude = gpsPublisher.Longitude,
+                        altitude = gpsPublisher.Altitude,
+                        horizontalAccData = (float)gpsPublisher.HorizontalAcc,
+                        speedData = (float)gpsPublisher.Speed,
+                        orientationX = orientationPublisher.Gyro_x,
+                        orientationY = orientationPublisher.Gyro_y,
+                        orientationZ = orientationPublisher.Gyro_z,
+                        //movesenseOrientation_x = moveSensePublisher.moveSenseGyro_X,
+                        //movesenseOrientation_y = moveSensePublisher.moveSenseGyro_Y,
+                        //movesenseOrientation_z = moveSensePublisher.moveSenseGyro_Z,
+                        accelerationX = (float)accelerationPublisher.AccelerationX,
+                        accelerationY = (float)accelerationPublisher.AccelerationY,
+                        accelerationZ = (float)accelerationPublisher.AccelerationZ,
+                        //movesenseAcceleration_x = moveSensePublisher.moveSenseLinearAcc_X,
+                        //movesenseAcceleration_y = moveSensePublisher.moveSenseLinearAcc_Y,
+                        //movesenseAcceleration_z = moveSensePublisher.moveSenseLinearAcc_Z,
+                        inclinationX = (float)inclinationPublisher.Roll,
+                        inclinationY = (float)inclinationPublisher.Pitch,
+                        inclinationZ = (float)inclinationPublisher.Yaw,
+                        magneticFieldX = (float)magneticPublisher.MagX,
+                        magneticFieldY = (float)magneticPublisher.MagY,
+                        magneticFieldZ = (float)magneticPublisher.MagZ,
+                        //movesenseMagnetic_x = moveSensePublisher.moveSenseMag_X,
+                        //movesenseMagnetic_y = moveSensePublisher.moveSenseMag_Y,
+                        //movesenseMagnetic_z = moveSensePublisher.moveSenseMag_Z,
+                      //  decibels = microphonePublisher.GetLoudnessFromMicrophone(),
+                        //temperature = (int)moveSensePublisher.moveSenseTemp,
+                        //hearRate = (int)moveSensePublisher.heartRate,
+                       // batteryLevel = (int)(SystemInfo.batteryLevel * 100),
+                        //imagePath = saveToPnG.image_path
+
+                  };
+
+                  arrayList.Add(data);
+                  arrayToSave = arrayList.ToArray();
+                 // Debug.Log(data);
+
+
+    }
