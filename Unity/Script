@@ -180,16 +180,6 @@ public void modelData()
              Debug.Log( "Picking");
                label = "Picking";
               break;
-        case 3:
-             Imax =3;
-             Debug.Log( "Palmas");
-              label = "Palmas";
-             break;
-        case 4:
-             Imax =4;
-             Debug.Log( "Sitting ");
-             label = "sitting";
-             break;
         }
         
      outputInference.text = label.ToString();
