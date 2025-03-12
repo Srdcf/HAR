@@ -26,12 +26,11 @@
             double MagnZDifference = 0.0;
 
  public TextMeshPro outputInference;
-            public Modelo model;
+ public Modelo model;
 
 
  private void FixedUpdate()
             {
-                  UpdateData();
                   modelData(); 
             }
 
@@ -190,49 +189,25 @@ public void modelData()
 
 
 
-            private void UpdateData()
-            {
 
-                  DataCSV data = new DataCSV
-                  {
-                        time = DateTime.UtcNow.ToString("dd/MM/yy HH:mm:ss.fff", CultureInfo.InvariantCulture),
-                        latitude = gpsPublisher.Latitude,
-                        longitude = gpsPublisher.Longitude,
-                        altitude = gpsPublisher.Altitude,
-                        horizontalAccData = (float)gpsPublisher.HorizontalAcc,
-                        speedData = (float)gpsPublisher.Speed,
-                        orientationX = orientationPublisher.Gyro_x,
-                        orientationY = orientationPublisher.Gyro_y,
-                        orientationZ = orientationPublisher.Gyro_z,
-                        //movesenseOrientation_x = moveSensePublisher.moveSenseGyro_X,
-                        //movesenseOrientation_y = moveSensePublisher.moveSenseGyro_Y,
-                        //movesenseOrientation_z = moveSensePublisher.moveSenseGyro_Z,
-                        accelerationX = (float)accelerationPublisher.AccelerationX,
-                        accelerationY = (float)accelerationPublisher.AccelerationY,
-                        accelerationZ = (float)accelerationPublisher.AccelerationZ,
-                        //movesenseAcceleration_x = moveSensePublisher.moveSenseLinearAcc_X,
-                        //movesenseAcceleration_y = moveSensePublisher.moveSenseLinearAcc_Y,
-                        //movesenseAcceleration_z = moveSensePublisher.moveSenseLinearAcc_Z,
-                        inclinationX = (float)inclinationPublisher.Roll,
-                        inclinationY = (float)inclinationPublisher.Pitch,
-                        inclinationZ = (float)inclinationPublisher.Yaw,
-                        magneticFieldX = (float)magneticPublisher.MagX,
-                        magneticFieldY = (float)magneticPublisher.MagY,
-                        magneticFieldZ = (float)magneticPublisher.MagZ,
-                        //movesenseMagnetic_x = moveSensePublisher.moveSenseMag_X,
-                        //movesenseMagnetic_y = moveSensePublisher.moveSenseMag_Y,
-                        //movesenseMagnetic_z = moveSensePublisher.moveSenseMag_Z,
-                      //  decibels = microphonePublisher.GetLoudnessFromMicrophone(),
-                        //temperature = (int)moveSensePublisher.moveSenseTemp,
-                        //hearRate = (int)moveSensePublisher.heartRate,
-                       // batteryLevel = (int)(SystemInfo.batteryLevel * 100),
-                        //imagePath = saveToPnG.image_path
-
-                  };
-
-                  arrayList.Add(data);
-                  arrayToSave = arrayList.ToArray();
-                 // Debug.Log(data);
-
-
-    }
+ public class DataModel
+      {
+            
+        public  double  longitude;
+        public  double  latitude;
+        public  double  altitude;
+        public  double  horizontalAccData;
+        public  double  speedData;
+        public  double  orientationX;
+        public  double  orientationY;
+        public  double  orientationZ;
+        public  double  accelerationX;
+        public  double  accelerationY;
+        public  double  accelerationZ;
+        public  double  inclinationX;
+        public  double  inclinationY;
+        public  double  inclinationZ;
+        public  double  magneticFieldX;
+        public  double  magneticFieldY;
+        public  double  magneticFieldZ;
+      }
