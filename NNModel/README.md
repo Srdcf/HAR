@@ -4,7 +4,7 @@ This file contains three notebooks for training, analyzing, and exporting a Huma
 # Technologies Used:
 Tensorflow (v2) for trainning the NNModel
 
-Onnx (v 1.18.0) 
+Onnx (v1.18.0) 
 
 ## **File Structure**
 
